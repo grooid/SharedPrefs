@@ -114,7 +114,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                 }
                 method("contains$methodName", ACC_PUBLIC, boolean) {
                     // boolean MyField() {
-                    //     return __sharedPrefs.containsXxx("my_field")
+                    //     return __sharedPrefs.contains("my_field")
                     // }
                     parameters {}
                     exceptions {}
@@ -132,7 +132,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                 }
                 method("remove$methodName", ACC_PUBLIC, void) {
                     // void removeMyField() {
-                    //     __sharedPrefs.edit().removeXxx("my_field").apply()
+                    //     __sharedPrefs.edit().remove("my_field").apply()
                     // }
                     parameters {}
                     exceptions {}
