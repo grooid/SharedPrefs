@@ -23,9 +23,9 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
     @Override
     void visit(ASTNode[] nodes, SourceUnit source) {
         this.classNode = nodes[1] as ClassNode
-        addFields()
         addConstructor()
         addMethods()
+        addFields()
     }
 
     private void addFields() {
