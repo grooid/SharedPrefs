@@ -1,0 +1,9 @@
+package test
+
+import pl.mg6.grooid.SharedPrefs
+
+@SharedPrefs
+class SharedPrefsString {
+
+    private final String myString
+}

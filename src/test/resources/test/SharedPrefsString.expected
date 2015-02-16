@@ -1,0 +1,29 @@
+package test
+
+import android.content.SharedPreferences
+
+class SharedPrefsString {
+
+    private final String myString
+    private final SharedPreferences __sharedPrefs
+
+    SharedPrefsString(SharedPreferences sharedPrefs) {
+        __sharedPrefs = sharedPrefs
+    }
+
+    String getMyString() {
+        return __sharedPrefs.getString("my_string", myString)
+    }
+
+    void setMyString(String myString) {
+        __sharedPrefs.edit().putString("my_string", myString).apply()
+    }
+
+    boolean containsMyString() {
+        return __sharedPrefs.contains("my_string")
+    }
+
+    void removeMyString() {
+        __sharedPrefs.edit().remove("my_string").apply()
+    }
+}
