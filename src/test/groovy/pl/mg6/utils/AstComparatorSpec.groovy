@@ -23,4 +23,13 @@ class AstComparatorSpec extends Specification {
         def e = thrown(RuntimeException)
         e.message == "Different class names. \nActual: actual.ExpectedClassName \nExpect: expected.ExpectedClassName "
     }
+
+    def "should fail on different number of classes"() {
+        def test = new AstResourcesHelper().loadTest("/astcomparator/DifferentNumberOfClasses")
+        when:
+        assertThat test[0] isEqualTo test[1]
+        then:
+        def e = thrown(RuntimeException)
+        e.message == "Node count different. \nActual: 3 \nExpect: 2 "
+    }
 }
