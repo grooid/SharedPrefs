@@ -14,4 +14,13 @@ class AstComparatorSpec extends Specification {
         def e = thrown(RuntimeException)
         e.message == "Different class names. \nActual: ActualClassName \nExpect: ExpectedClassName "
     }
+
+    def "should fail on different package names"() {
+        def test = new AstResourcesHelper().loadTest("/astcomparator/DifferentPackageNames")
+        when:
+        assertThat test[0] isEqualTo test[1]
+        then:
+        def e = thrown(RuntimeException)
+        e.message == "Different class names. \nActual: actual.ExpectedClassName \nExpect: expected.ExpectedClassName "
+    }
 }
