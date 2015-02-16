@@ -24,8 +24,8 @@ class AstResourcesHelper {
         ]
     }
 
-    private loadTestImpl(String test) {
-        new AstBuilder().buildFromString(getClass().getResource(test).text)
+    private List<ASTNode> loadTestImpl(String test) {
+        return new AstBuilder().buildFromString(getClass().getResource(test).text)
     }
 
     private static String[] filesWithExtension(File root, String extension) {
