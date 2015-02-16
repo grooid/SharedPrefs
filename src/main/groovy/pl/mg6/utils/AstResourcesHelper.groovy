@@ -1,10 +1,8 @@
 package pl.mg6.utils
 
-import groovy.transform.CompileStatic
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.builder.AstBuilder
 
-@CompileStatic
 class AstResourcesHelper {
 
     private static final String actualExtension = ".actual"
