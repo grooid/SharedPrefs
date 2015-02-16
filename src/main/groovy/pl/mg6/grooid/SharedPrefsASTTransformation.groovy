@@ -30,7 +30,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
 
     private void addFields() {
         def type = ClassHelper.make(SharedPreferences)
-        classNode.addField(sharedPrefsFieldName, ACC_PRIVATE | ACC_FINAL, type, new EmptyExpression())
+        classNode.addField(sharedPrefsFieldName, ACC_PRIVATE | ACC_FINAL, type, null)
     }
 
     private void addConstructor() {
