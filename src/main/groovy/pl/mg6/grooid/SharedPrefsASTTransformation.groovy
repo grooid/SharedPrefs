@@ -6,7 +6,6 @@ import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.builder.AstBuilder
-import org.codehaus.groovy.ast.expr.EmptyExpression
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.AbstractASTTransformation
@@ -164,12 +163,28 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
     }
 
     private String sharedPrefsNameForField(FieldNode field) {
-        if (field.name.contains("myFloat")) return "Float"
-        return field.name.contains("myString") ? "String" : "Int"
+        switch (field.type.typeClass) {
+            case int:
+                return "Int"
+            case float:
+                return "Float"
+            case long:
+                return "Long"
+            default:
+                return "String"
+        }
     }
 
     private Class<?> sharedPrefsTypeForField(FieldNode field) {
-        if (field.name.contains("myFloat")) return float
-        return field.name.contains("myString") ? String : int
+        switch (field.type.typeClass) {
+            case int:
+                return int
+            case float:
+                return float
+            case long:
+                return long
+            default:
+                return String
+        }
     }
 }

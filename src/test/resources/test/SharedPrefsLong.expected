@@ -1,0 +1,29 @@
+package test
+
+import android.content.SharedPreferences
+
+class SharedPrefsLong {
+
+    private final long myLong
+    private final SharedPreferences __sharedPrefs
+
+    SharedPrefsLong(SharedPreferences sharedPrefs) {
+        __sharedPrefs = sharedPrefs
+    }
+
+    long getMyLong() {
+        return __sharedPrefs.getLong("my_long", myLong)
+    }
+
+    void setMyLong(long myLong) {
+        __sharedPrefs.edit().putLong("my_long", myLong).apply()
+    }
+
+    boolean containsMyLong() {
+        return __sharedPrefs.contains("my_long")
+    }
+
+    void removeMyLong() {
+        __sharedPrefs.edit().remove("my_long").apply()
+    }
+}
