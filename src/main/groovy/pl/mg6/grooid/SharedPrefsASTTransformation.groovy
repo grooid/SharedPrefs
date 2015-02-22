@@ -63,55 +63,132 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
         classNode.fields.each { field ->
             def methodName = field.name.capitalize()
             def prefName = StringUtils.toLowercaseWithUnderscores(field.name)
-            new AstBuilder().buildFromSpec {
-                method("get$methodName", ACC_PUBLIC, sharedPrefsTypeForField(field)) {
-                    // Xxx getMyField() {
-                    //     return __sharedPrefs.getXxx("my_field", myField)
-                    // }
-                    parameters {}
-                    exceptions {}
-                    block {
-                        returnStatement {
-                            methodCall {
-                                variable sharedPrefsFieldName
-                                constant "get" + sharedPrefsNameForField(field)
-                                argumentList {
-                                    constant prefName
-                                    variable field.name
-                                }
-                            }
-                        }
-                    }
-                }
-                method("set$methodName", ACC_PUBLIC, void) {
-                    // void setMyField(Xxx myField) {
-                    //     __sharedPrefs.edit().putXxx("my_field", myField).apply()
-                    // }
-                    parameters {
-                        parameter "$field.name": sharedPrefsTypeForField(field)
-                    }
-                    exceptions {}
-                    block {
-                        expression {
-                            methodCall {
+            if (supportedType(field)) {
+                new AstBuilder().buildFromSpec {
+                    method("get$methodName", ACC_PUBLIC, field.type.typeClass) {
+                        // Xxx getMyField() {
+                        //     return __sharedPrefs.getXxx("my_field", myField)
+                        // }
+                        parameters {}
+                        exceptions {}
+                        block {
+                            returnStatement {
                                 methodCall {
-                                    methodCall {
-                                        variable sharedPrefsFieldName
-                                        constant "edit"
-                                        argumentList {}
-                                    }
-                                    constant "put" + sharedPrefsNameForField(field)
+                                    variable sharedPrefsFieldName
+                                    constant "get" + sharedPrefsNameForField(field)
                                     argumentList {
                                         constant prefName
                                         variable field.name
                                     }
                                 }
-                                constant "apply"
-                                argumentList {}
                             }
                         }
                     }
+                    method("set$methodName", ACC_PUBLIC, void) {
+                        // void setMyField(Xxx myField) {
+                        //     __sharedPrefs.edit().putXxx("my_field", myField).apply()
+                        // }
+                        parameters {
+                            parameter "$field.name": field.type.typeClass
+                        }
+                        exceptions {}
+                        block {
+                            expression {
+                                methodCall {
+                                    methodCall {
+                                        methodCall {
+                                            variable sharedPrefsFieldName
+                                            constant "edit"
+                                            argumentList {}
+                                        }
+                                        constant "put" + sharedPrefsNameForField(field)
+                                        argumentList {
+                                            constant prefName
+                                            variable field.name
+                                        }
+                                    }
+                                    constant "apply"
+                                    argumentList {}
+                                }
+                            }
+                        }
+                    }
+                }.each { method ->
+                    classNode.addMethod method
                 }
+            } else if (field.type.typeClass == double) {
+                new AstBuilder().buildFromSpec {
+                    method("get$methodName", ACC_PUBLIC, double) {
+                        // double getMyField() {
+                        //     return Double.longBitsToDouble(__sharedPrefs.getLong("my_field", Double.doubleToLongBits(myField)))
+                        // }
+                        parameters {}
+                        exceptions {}
+                        block {
+                            returnStatement {
+                                methodCall {
+                                    classExpression Double
+                                    constant "longBitsToDouble"
+                                    argumentList {
+                                        methodCall {
+                                            variable sharedPrefsFieldName
+                                            constant "getLong"
+                                            argumentList {
+                                                constant prefName
+                                                methodCall {
+                                                    classExpression Double
+                                                    constant "doubleToLongBits"
+                                                    argumentList {
+                                                        variable field.name
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    method("set$methodName", ACC_PUBLIC, void) {
+                        // void setMyField(double myField) {
+                        //     __sharedPrefs.edit().putLong("my_field", Double.doubleToLongBits(myField)).apply()
+                        // }
+                        parameters {
+                            parameter "$field.name": double
+                        }
+                        exceptions {}
+                        block {
+                            expression {
+                                methodCall {
+                                    methodCall {
+                                        methodCall {
+                                            variable sharedPrefsFieldName
+                                            constant "edit"
+                                            argumentList {}
+                                        }
+                                        constant "putLong"
+                                        argumentList {
+                                            constant prefName
+                                            methodCall {
+                                                classExpression Double
+                                                constant "doubleToLongBits"
+                                                argumentList {
+                                                    variable field.name
+                                                }
+                                            }
+                                        }
+                                    }
+                                    constant "apply"
+                                    argumentList {}
+                                }
+                            }
+                        }
+                    }
+                }.each { method ->
+                    classNode.addMethod method
+                }
+            }
+            new AstBuilder().buildFromSpec {
                 method("contains$methodName", ACC_PUBLIC, boolean) {
                     // boolean MyField() {
                     //     return __sharedPrefs.contains("my_field")
@@ -169,22 +246,15 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
             case float:
                 return "Float"
             case long:
+            case double:
                 return "Long"
             default:
                 return "String"
         }
     }
 
-    private Class<?> sharedPrefsTypeForField(FieldNode field) {
-        switch (field.type.typeClass) {
-            case int:
-                return int
-            case float:
-                return float
-            case long:
-                return long
-            default:
-                return String
-        }
+    private boolean supportedType(FieldNode field) {
+        Class<?> clazz = field.type.typeClass
+        return clazz == int || clazz == float || clazz == long || clazz == String
     }
 }

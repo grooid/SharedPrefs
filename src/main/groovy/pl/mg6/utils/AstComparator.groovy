@@ -160,16 +160,19 @@ class AstComparator {
                     throw new RuntimeException("Field names are different. $expected.fieldName != $actual.fieldName")
                 }
             },
-            VariableExpression : { VariableExpression expected, VariableExpression actual ->
+            VariableExpression    : { VariableExpression expected, VariableExpression actual ->
                 if (expected.name != actual.name) {
                     throw new RuntimeException("Different variable names. \nActual: $actual.name \nExpect: $expected.name ")
                 }
                 //assertClassNode(expected.type, actual.type)
                 assertNode(expected.initialExpression, actual.initialExpression)
             },
-            PropertyExpression : { PropertyExpression expected, PropertyExpression actual ->
+            PropertyExpression    : { PropertyExpression expected, PropertyExpression actual ->
                 assertNode(expected.objectExpression, actual.objectExpression)
                 assertNode(expected.property, actual.property)
+            },
+            ClassExpression       : { ClassExpression expected, ClassExpression actual ->
+                assertClassNode(expected.type, actual.type)
             },
             BytecodeSequence      : { BytecodeSequence expected, BytecodeSequence actual ->
                 if (expected.instructions.size() != actual.instructions.size()) {

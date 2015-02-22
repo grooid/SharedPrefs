@@ -1,0 +1,29 @@
+package test
+
+import android.content.SharedPreferences
+
+class SharedPrefsDouble {
+
+    private final double myDouble
+    private final SharedPreferences __sharedPrefs
+
+    SharedPrefsDouble(SharedPreferences sharedPrefs) {
+        __sharedPrefs = sharedPrefs
+    }
+
+    double getMyDouble() {
+        return Double.longBitsToDouble(__sharedPrefs.getLong("my_double", Double.doubleToLongBits(myDouble)))
+    }
+
+    void setMyDouble(double myDouble) {
+        __sharedPrefs.edit().putLong("my_double", Double.doubleToLongBits(myDouble)).apply()
+    }
+
+    boolean containsMyDouble() {
+        return __sharedPrefs.contains("my_double")
+    }
+
+    void removeMyDouble() {
+        __sharedPrefs.edit().remove("my_double").apply()
+    }
+}
