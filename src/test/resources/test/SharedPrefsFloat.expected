@@ -1,0 +1,29 @@
+package test
+
+import android.content.SharedPreferences
+
+class SharedPrefsInt {
+
+    private final float myFloat
+    private final SharedPreferences __sharedPrefs
+
+    SharedPrefsInt(SharedPreferences sharedPrefs) {
+        __sharedPrefs = sharedPrefs
+    }
+
+    float getMyFloat() {
+        return __sharedPrefs.getFloat("my_float", myFloat)
+    }
+
+    void setMyFloat(float myFloat) {
+        __sharedPrefs.edit().putFloat("my_float", myFloat).apply()
+    }
+
+    boolean containsMyFloat() {
+        return __sharedPrefs.contains("my_float")
+    }
+
+    void removeMyFloat() {
+        __sharedPrefs.edit().remove("my_float").apply()
+    }
+}

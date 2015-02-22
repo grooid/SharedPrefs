@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
+import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.builder.AstBuilder
 import org.codehaus.groovy.ast.expr.EmptyExpression
 import org.codehaus.groovy.control.CompilePhase
@@ -64,7 +65,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
             def methodName = field.name.capitalize()
             def prefName = StringUtils.toLowercaseWithUnderscores(field.name)
             new AstBuilder().buildFromSpec {
-                method("get$methodName", ACC_PUBLIC, field.name.contains("myString") ? String : int) {
+                method("get$methodName", ACC_PUBLIC, sharedPrefsTypeForField(field)) {
                     // Xxx getMyField() {
                     //     return __sharedPrefs.getXxx("my_field", myField)
                     // }
@@ -74,7 +75,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                         returnStatement {
                             methodCall {
                                 variable sharedPrefsFieldName
-                                constant field.name.contains("myString") ? "getString" : "getInt"
+                                constant "get" + sharedPrefsNameForField(field)
                                 argumentList {
                                     constant prefName
                                     variable field.name
@@ -88,7 +89,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                     //     __sharedPrefs.edit().putXxx("my_field", myField).apply()
                     // }
                     parameters {
-                        parameter "$field.name": field.name.contains("myString") ? String : int
+                        parameter "$field.name": sharedPrefsTypeForField(field)
                     }
                     exceptions {}
                     block {
@@ -100,7 +101,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                                         constant "edit"
                                         argumentList {}
                                     }
-                                    constant field.name.contains("myString") ? "putString" : "putInt"
+                                    constant "put" + sharedPrefsNameForField(field)
                                     argumentList {
                                         constant prefName
                                         variable field.name
@@ -160,5 +161,15 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                 classNode.addMethod method
             }
         }
+    }
+
+    private String sharedPrefsNameForField(FieldNode field) {
+        if (field.name.contains("myFloat")) return "Float"
+        return field.name.contains("myString") ? "String" : "Int"
+    }
+
+    private Class<?> sharedPrefsTypeForField(FieldNode field) {
+        if (field.name.contains("myFloat")) return float
+        return field.name.contains("myString") ? String : int
     }
 }
