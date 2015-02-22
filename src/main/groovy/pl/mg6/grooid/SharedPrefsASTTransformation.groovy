@@ -64,7 +64,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
             def methodName = field.name.capitalize()
             def prefName = StringUtils.toLowercaseWithUnderscores(field.name)
             new AstBuilder().buildFromSpec {
-                method("get$methodName", ACC_PUBLIC, String) {
+                method("get$methodName", ACC_PUBLIC, field.name.contains("myString") ? String : int) {
                     // Xxx getMyField() {
                     //     return __sharedPrefs.getXxx("my_field", myField)
                     // }
@@ -74,7 +74,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                         returnStatement {
                             methodCall {
                                 variable sharedPrefsFieldName
-                                constant "getString"
+                                constant field.name.contains("myString") ? "getString" : "getInt"
                                 argumentList {
                                     constant prefName
                                     variable field.name
@@ -88,7 +88,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                     //     __sharedPrefs.edit().putXxx("my_field", myField).apply()
                     // }
                     parameters {
-                        parameter "$field.name": String
+                        parameter "$field.name": field.name.contains("myString") ? String : int
                     }
                     exceptions {}
                     block {
@@ -100,7 +100,7 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
                                         constant "edit"
                                         argumentList {}
                                     }
-                                    constant "putString"
+                                    constant field.name.contains("myString") ? "putString" : "putInt"
                                     argumentList {
                                         constant prefName
                                         variable field.name

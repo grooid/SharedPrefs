@@ -1,0 +1,29 @@
+package test
+
+import android.content.SharedPreferences
+
+class SharedPrefsInt {
+
+    private final int myInt
+    private final SharedPreferences __sharedPrefs
+
+    SharedPrefsInt(SharedPreferences sharedPrefs) {
+        __sharedPrefs = sharedPrefs
+    }
+
+    int getMyInt() {
+        return __sharedPrefs.getInt("my_int", myInt)
+    }
+
+    void setMyInt(int myInt) {
+        __sharedPrefs.edit().putInt("my_int", myInt).apply()
+    }
+
+    boolean containsMyInt() {
+        return __sharedPrefs.contains("my_int")
+    }
+
+    void removeMyInt() {
+        __sharedPrefs.edit().remove("my_int").apply()
+    }
+}

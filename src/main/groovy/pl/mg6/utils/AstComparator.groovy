@@ -144,6 +144,7 @@ class AstComparator {
                 }
             },
             MethodCallExpression  : { MethodCallExpression expected, MethodCallExpression actual ->
+                assertNode(expected.objectExpression, actual.objectExpression)
                 assertNode(expected.arguments, actual.arguments)
                 assertNode(expected.method, actual.method)
             },

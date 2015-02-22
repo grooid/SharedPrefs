@@ -1,0 +1,9 @@
+package test
+
+import pl.mg6.grooid.SharedPrefs
+
+@SharedPrefs
+class SharedPrefsInt {
+
+    private final int myInt
+}
