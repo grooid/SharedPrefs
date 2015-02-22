@@ -30,6 +30,6 @@ class AstComparatorSpec extends Specification {
         assertThat test[0] isEqualTo test[1]
         then:
         def e = thrown(RuntimeException)
-        e.message == "Node count different. \nActual: 3 \nExpect: 2 "
+        e.message.startsWith "Node count different 3 != 2. \nActual: "
     }
 }
