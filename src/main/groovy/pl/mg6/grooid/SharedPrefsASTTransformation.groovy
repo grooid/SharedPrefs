@@ -240,21 +240,11 @@ class SharedPrefsASTTransformation extends AbstractASTTransformation {
     }
 
     private String sharedPrefsNameForField(FieldNode field) {
-        switch (field.type.typeClass) {
-            case int:
-                return "Int"
-            case float:
-                return "Float"
-            case long:
-            case double:
-                return "Long"
-            default:
-                return "String"
-        }
+        return field.type.typeClass.simpleName.capitalize()
     }
 
     private boolean supportedType(FieldNode field) {
         Class<?> clazz = field.type.typeClass
-        return clazz == int || clazz == float || clazz == long || clazz == String
+        return clazz == boolean || clazz == float || clazz == int || clazz == long || clazz == String
     }
 }

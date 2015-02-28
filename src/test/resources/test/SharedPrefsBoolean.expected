@@ -1,0 +1,29 @@
+package test
+
+import android.content.SharedPreferences
+
+class SharedPrefsBoolean {
+
+    private final boolean myBool
+    private final SharedPreferences __sharedPrefs
+
+    SharedPrefsBoolean(SharedPreferences sharedPrefs) {
+        __sharedPrefs = sharedPrefs
+    }
+
+    boolean getMyBool() {
+        return __sharedPrefs.getBoolean("my_bool", myBool)
+    }
+
+    void setMyBool(boolean myBool) {
+        __sharedPrefs.edit().putBoolean("my_bool", myBool).apply()
+    }
+
+    boolean containsMyBool() {
+        return __sharedPrefs.contains("my_bool")
+    }
+
+    void removeMyBool() {
+        __sharedPrefs.edit().remove("my_bool").apply()
+    }
+}
